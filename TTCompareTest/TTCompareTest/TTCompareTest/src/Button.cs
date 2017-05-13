@@ -60,6 +60,16 @@ namespace TTCompare
 				_color = value;
 			}
 		}
+
+		public String Text {
+			get {
+				return _text;
+			}
+			set {
+				_text = value;
+
+			}
+		}
 	}
 }
 

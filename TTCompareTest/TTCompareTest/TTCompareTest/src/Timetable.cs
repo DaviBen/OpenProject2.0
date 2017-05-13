@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SwinGameSDK;
 
 namespace TTCompare
@@ -17,6 +18,31 @@ namespace TTCompare
 				return _times;
 			}	
 			}
+
+		public void populateTimetable (char[] values)
+		{
+			int c = 0;
+			for (int i = 0; i < _times.GetLength (0); i++) 
+			{
+				for (int j = 0; j < _times.GetLength (1); j++) 
+				{
+					switch (values[c]) {
+					case 'Y':
+						_times [i,j].Availability = Availability.Y;
+						break;
+					case 'N':
+						_times [i,j].Availability = Availability.N;
+						break;
+					case 'M':
+						_times [i,j].Availability = Availability.M;
+						break;
+					default:
+						break;
+					}
+					c++;
+				}
+			}
+		}
 
 		public void Create ()
 		{
@@ -67,6 +93,12 @@ namespace TTCompare
 					}
 				}
 			}
+		}
+		// Returns the availability of the specified block
+		// Taken from iteration 1, written by PT
+		public Availability CheckBlock (int hour, int day)
+		{
+			return _times [hour, day].Availability;
 		}
 	}
 }

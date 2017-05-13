@@ -4,13 +4,13 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="src\Manage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="src\Timetable.cs">
     <Files>
       <File FileName="src\MainMenu.cs" Line="1" Column="1" />
       <File FileName="src\Manage.cs" Line="55" Column="15" />
-      <File FileName="src\Compare.cs" Line="1" Column="1" />
-      <File FileName="src\Button.cs" Line="1" Column="1" />
-      <File FileName="src\Timetable.cs" Line="12" Column="30" />
+      <File FileName="src\Compare.cs" Line="52" Column="4" />
+      <File FileName="src\Timetable.cs" Line="31" Column="12" />
+      <File FileName="src\Button.cs" Line="72" Column="4" />
       <File FileName="src\Block.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
