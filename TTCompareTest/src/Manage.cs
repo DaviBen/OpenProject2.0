@@ -42,7 +42,7 @@ namespace TTCompare
 				{
 					
 					result = this.clicked (SwinGame.MousePosition ());
-					SwinGame.Delay (100);
+					SwinGame.Delay (160);
 				}
 			}
 			switch (result)
