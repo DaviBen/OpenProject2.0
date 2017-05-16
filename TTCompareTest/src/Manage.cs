@@ -62,21 +62,34 @@ namespace TTCompare
 
 		private void Save ()
 		{
-			_timetabledisplayed = false;
-			SwinGame.StartReadingText(Color.Black, 20, Resources.GetFont("Courier"), 500, 400);
-			while (SwinGame.ReadingText())
-			{
-				SwinGame.ProcessEvents();
-				this.Draw ();
-			}
-			_name = SwinGame.TextReadAsASCII();
-			using (StreamWriter File = new StreamWriter(_name + ".txt", false))
-			{ 
-				foreach (Block b in _timetable.Times)
+			/* The commented out code at the start and end of this function was attempting to 
+			 * Allow the user to go back to the timetable entry page while entering a name
+			 * It hasn't yet succeeded and will be left for the time being*/
+			bool mouseCheck = false;
+			bool textEntered = false;
+			do {
+				if (SwinGame.MouseClicked (MouseButton.LeftButton) && this.clicked (SwinGame.MousePosition ()) == "Back") 
 				{
-					File.Write (b.Availability);
+					mouseCheck = true;
+				} else {
+					_timetabledisplayed = false;
+					SwinGame.StartReadingText (Color.Black, 20, Resources.GetFont ("Courier"), 500, 400);
+					while (SwinGame.ReadingText ()) 
+					{
+						SwinGame.ProcessEvents ();
+						this.Draw ();
+					}
+					_name = SwinGame.TextReadAsASCII ();
+					using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
+					{
+						foreach (Block b in _timetable.Times) 
+						{
+							File.Write (b.Availability);
+						}
+					}
+					//textEntered = true;
 				}
-			}
+			} while (!mouseCheck || !textEntered);
 		}
 
 		public void Draw ()
@@ -85,15 +98,19 @@ namespace TTCompare
 			if (_timetabledisplayed)
 			{
 				TTDraw ();
+				foreach (Button b in _buttons) 
+				{
+					b.Draw ();
+				}
 			}
 			else
 			{
-				SwinGame.DrawText ("Name: ", Color.Black, 450, 400);	
+				SwinGame.ClearScreen ();
+				SwinGame.DrawText ("Press ENTER to save", Color.Black, Resources.GetFont ("Courier"), 435, 385);	
+				SwinGame.DrawText ("Name: ", Color.Black, Resources.GetFont ("Courier"), 450, 400);
+				_buttons [0].Draw ();
 			}
-			foreach (Button b in _buttons)
-			{
-				b.Draw ();
-			}
+
 			SwinGame.RefreshScreen (60);
 		}
 

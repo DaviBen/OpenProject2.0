@@ -29,34 +29,48 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.FillRectangle (_color, _x, _y, _width, _height);
-			SwinGame.DrawText (_text, Color.Black, _x + _width / _scale, _y + _height / _scale);  
+			// Centre-aligns the text in the buttons
+			int X = (int)_x + (_width - _text.ToCharArray ().Length) / _scale;
+			int Y = (int)_y + (_height - 15) / 2;
+			SwinGame.DrawText (_text, Color.Black, Resources.GetFont ("Courier"), X, Y);
+			HoverOverRectangle (SwinGame.MousePosition ());
 		}
-
+		public void MouseIsOver (Point2D pt)
+		{
+			if (SwinGame.PointInRect (pt, _x, _y, _width, _height)) {
+				SwinGame.DrawRectangle (Color.Black, _x, _y, _width, _height);
+				SwinGame.RefreshScreen ();
+			}
+		}
+		// Checks if the button is at the specified location
 		public bool IsAt (Point2D pt)
 		{
-			if (SwinGame.PointInRect (pt, _x, _y, _width, _height))
-			{
+			if (SwinGame.PointInRect (pt, _x, _y, _width, _height)) {
 				return true;
 			}
 			return false;
 		}
-
-		public string Value
+		// Gives a black outline to a button if the mouse is hovering over it
+		private void HoverOverRectangle (Point2D pt)
 		{
-			get
-			{
+			if (this.IsAt (pt))
+				{
+					SwinGame.DrawRectangle (Color.Black, _x, _y, _width, _height);
+				}
+
+		}
+
+		public string Value {
+			get {
 				return _value;
 			}
 		}
 
-		public Color Color
-		{
-			get
-			{
+		public Color Color {
+			get {
 				return _color;
 			}
-			set
-			{
+			set {
 				_color = value;
 			}
 		}
@@ -70,6 +84,7 @@ namespace TTCompare
 
 			}
 		}
+
 	}
 }
 
