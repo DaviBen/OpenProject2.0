@@ -38,9 +38,11 @@ namespace TTCompare
 			{
 				SwinGame.ProcessEvents ();
 				this.Draw ();
-				if (SwinGame.MouseClicked (MouseButton.LeftButton))
+				if (SwinGame.MouseDown (MouseButton.LeftButton))
 				{
+					
 					result = this.clicked (SwinGame.MousePosition ());
+					SwinGame.Delay (100);
 				}
 			}
 			switch (result)
