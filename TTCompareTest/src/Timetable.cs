@@ -78,17 +78,16 @@ namespace TTCompare
 			{
 				if (b.IsAt (pt))
 				{
-					if (b.Availability == Availability.N)
+					if (b.NotYetAltered) 
 					{
-						b.Availability = Availability.Y;
-					}
-					else if (b.Availability == Availability.Y)
-					{
-						b.Availability = Availability.M;
-					}
-					else
-					{
-						b.Availability = Availability.N;	
+						if (b.Availability == Availability.N) {
+							b.Availability = Availability.Y;
+						} else if (b.Availability == Availability.Y) {
+							b.Availability = Availability.M;
+						} else {
+							b.Availability = Availability.N;
+						}
+						b.NotYetAltered = false;
 					}
 				}
 			}

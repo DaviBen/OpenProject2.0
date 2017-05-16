@@ -38,12 +38,17 @@ namespace TTCompare
 			{
 				SwinGame.ProcessEvents ();
 				this.Draw ();
-				if (SwinGame.MouseClicked (MouseButton.LeftButton))
+				if (SwinGame.MouseClicked (MouseButton.LeftButton)) 
+				{
+					foreach (Block b in _timetable.Times) 
+					{
+						b.NotYetAltered = true;
+					}
 					result = this.clicked (SwinGame.MousePosition ());
+				}
 				else if (SwinGame.MouseDown (MouseButton.LeftButton))
 				{
 					result = this.clicked (SwinGame.MousePosition ());
-					SwinGame.Delay (160);
 				}
 			}
 			switch (result)

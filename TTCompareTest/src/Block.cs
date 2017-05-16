@@ -7,10 +7,13 @@ namespace TTCompare
 	{
 		private Availability _availability;
 
+
 		public Block (Color color, float x, float y, int height, int width, string text, int scale, string value) : base (color, x, y, height, width, text, scale, value)
 		{
 			_availability = Availability.N;
 		}
+
+
 
 		public Availability Availability
 		{

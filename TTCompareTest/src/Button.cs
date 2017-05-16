@@ -13,6 +13,7 @@ namespace TTCompare
 		private string _text;
 		private int _scale;
 		private string _value;
+		private bool _notYetAltered = true;
 
 		public Button (Color color, float x, float y, int height, int width, string text, int scale, string value)
 		{
@@ -24,6 +25,11 @@ namespace TTCompare
 			_text = text;
 			_scale = scale;
 			_value = value;
+		}
+
+		public bool NotYetAltered {
+			get { return _notYetAltered; }
+			set { _notYetAltered = value; }
 		}
 
 		public void Draw ()
