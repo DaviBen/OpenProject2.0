@@ -14,6 +14,9 @@ namespace TTCompare
 		private Timetable _timetable;
 		private bool _timetabledisplayed;
 		string _name;
+		bool _toChange = false;
+		Availability _currentState = Availability.N;
+		Availability _changeTo = Availability.Y;
 
 		public Manage ()
 		{
@@ -24,9 +27,9 @@ namespace TTCompare
 
 		public void Fill_buttons ()
 		{
-			_buttons.Add (new Button (Color.DarkGray, 0, 550, 50, 100, "Back", 3, "Back"));
-			_buttons.Add (new Button (Color.DarkGray, 850, 525, 75, 200, "Save", 2, "Save"));
-			_buttons.Add (new Button (Color.DarkGray, 0, 0, 50, 100, "Clear", 3, "Clear"));
+			_buttons.Add (new Button (Color.DarkGray, 0, 	550, 50, 100, "Back", 3, "Back"));
+			_buttons.Add (new Button (Color.DarkGray, 850, 	525, 75, 200, "Save", 2, "Save"));
+			_buttons.Add (new Button (Color.DarkGray, 0, 	0, 	 50, 200, "Change All", 3, "Change"));
 		}
 
 		public void Handle ()
@@ -52,12 +55,41 @@ namespace TTCompare
 				Save ();
 				GlobalState.State = State.Back;
 				break;
-			case "Clear":
+			case "Change":
+				_toChange = true;
 				Handle ();
 				break;
 			default:  
 				break;  
 			}
+		}
+
+		//Allows user to change all blocks to YES, MAYBE or NO at once
+		private void ChangeAll ()
+		{
+			//Checks what the current state is and changes all the blocks accordingly
+			switch (_currentState) 
+			{
+				case Availability.Y:
+					_changeTo = Availability.M;
+					_currentState = Availability.M;
+					break;
+				case Availability.M:
+					_changeTo = Availability.N;
+					_currentState = Availability.N;
+					break;
+				default:
+					_changeTo = Availability.Y;
+					_currentState = Availability.Y;
+					break;
+			}
+
+			foreach (Block b in _timetable.Times) 
+			{
+				b.Availability = _changeTo;
+			}
+
+			_toChange = false;
 		}
 
 		private void Save ()
@@ -95,6 +127,10 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
+			if (_toChange) 
+			{
+				ChangeAll ();
+			}
 			if (_timetabledisplayed)
 			{
 				TTDraw ();
