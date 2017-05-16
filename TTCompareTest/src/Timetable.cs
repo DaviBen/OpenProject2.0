@@ -14,12 +14,11 @@ namespace TTCompare
 		}
 
 		public Block[,] Times {
-			get {
-				return _times;
-			}	
+			get { return _times; }	
+			set { _times = value;}
 			}
 
-		public void populateTimetable (char[] values)
+		public void PopulateTimetable (char[] values)
 		{
 			int c = 0;
 			for (int i = 0; i < _times.GetLength (0); i++) 
