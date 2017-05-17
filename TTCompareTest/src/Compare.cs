@@ -89,16 +89,27 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
-			SwinGame.DrawText ("Loaded Timetables:", Color.Black, 800, 80);
-			int y = 80;
+			SwinGame.DrawText ("Loaded Timetables:", Color.Black, Resources.GetFont("Courier"), 800, 80);
+			string output = "Select 'ADD' to add a timetable";
+			int offset = 7*output.ToCharArray ().Length / 2;
+			SwinGame.DrawText (output, Color.Black, Resources.GetFont("Courier"), 500-offset , 370);
+			int y = 105;
 			foreach (string s in _TTnames)
 			{
-				SwinGame.DrawText (s, Color.Black, 950, y);
+				SwinGame.DrawText (s, Color.Black,Resources.GetFont("Courier"), 800, y);
 				y += 25;
 			}
 			foreach (Button b in _buttons)
 			{
-				b.Draw ();
+				// Compare button only displays when there are enough timetables selected to compare
+				if (b.Value == "Compare" && _toCompare.Count >= 2) 
+				{
+					b.Draw ();
+				} else if (b.Value != "Compare") 
+				{
+					b.Draw();
+				}
+
 			}
 			SwinGame.RefreshScreen (60);
 		}
@@ -225,13 +236,12 @@ namespace TTCompare
 
 				SwinGame.RefreshScreen ();
 				// Display output untill user clicks again
-				/*if (SwinGame.MouseClicked (MouseButton.LeftButton)) {
+				if (SwinGame.MouseClicked (MouseButton.LeftButton)) {
 					result = this.clicked (SwinGame.MousePosition ());
-				}*/
-
-				if (_buttons[0].IsAt (SwinGame.MousePosition())) 
-				{
-					result = _buttons[0].Value;
+					//Clears lists and objects so they're ready to go for another comparison
+					_toCompare.Clear ();
+					_toPrint.Times.Initialize ();
+					_TTnames.Clear ();
 				}
 				
 	

@@ -31,6 +31,7 @@ namespace TTCompare
 			while ((result == null)&&(!(SwinGame.WindowCloseRequested())))
 			{
 				SwinGame.ProcessEvents ();
+
 				this.Draw ();
 				if (SwinGame.MouseClicked (MouseButton.LeftButton))
 				{
@@ -53,8 +54,8 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
-			SwinGame.DrawText ("Timetable Comparer", Color.Black, 425, 100);
-			foreach (Button b in _buttons)
+			SwinGame.DrawText ("Timetable Comparer", Color.Black, Resources.GetFont("Courier"), 425, 100);
+			foreach (Button b in _buttons) 
 			{
 				b.Draw ();
 			}
