@@ -41,6 +41,7 @@ namespace TTCompare
 			{
 				SwinGame.ProcessEvents ();
 				this.Draw ();
+				//Used to check button selections
 				if (SwinGame.MouseClicked (MouseButton.LeftButton)) 
 				{
 					foreach (Block b in _timetable.Times) 
@@ -49,7 +50,10 @@ namespace TTCompare
 					}
 					result = this.clicked (SwinGame.MousePosition ());
 				}
-				else if (SwinGame.MouseDown (MouseButton.LeftButton))
+				//Used for click and drag when changing timetable blocks
+				else if (SwinGame.MouseDown (MouseButton.LeftButton) &&
+				         SwinGame.MouseY() > 90 && SwinGame.MouseY() < 230 &&
+				         SwinGame.MouseX() > 20 )
 				{
 					result = this.clicked (SwinGame.MousePosition ());
 				}
