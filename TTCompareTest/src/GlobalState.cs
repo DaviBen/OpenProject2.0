@@ -6,6 +6,10 @@ namespace TTCompare
 	{
 		static State state;
 
+		/// <summary>
+		/// Static property to get/set the global state which controls the flow of the GUI
+		/// </summary>
+		/// <returns>string</returns>
 		public static State State
 		{
 			get
