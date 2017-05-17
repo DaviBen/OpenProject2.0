@@ -53,7 +53,6 @@ namespace TTCompare
 				break;
 			case "Save":
 				Save ();
-				GlobalState.State = State.Back;
 				break;
 			case "Change":
 				_toChange = true;
@@ -94,34 +93,30 @@ namespace TTCompare
 
 		private void Save ()
 		{
-			/* The commented out code at the start and end of this function was attempting to 
-			 * Allow the user to go back to the timetable entry page while entering a name
-			 * It hasn't yet succeeded and will be left for the time being*/
-			bool mouseCheck = false;
-			bool textEntered = false;
-			do {
+			_timetabledisplayed = false;
+			//Reads user input while back button hasn't been clicked
+			SwinGame.StartReadingText (Color.Black, 20, Resources.GetFont ("Courier"), 500, 400);
+			while (SwinGame.ReadingText ()) 
+			{
+				SwinGame.ProcessEvents ();
+				this.Draw ();
 				if (SwinGame.MouseClicked (MouseButton.LeftButton) && this.clicked (SwinGame.MousePosition ()) == "Back") 
 				{
-					mouseCheck = true;
-				} else {
-					_timetabledisplayed = false;
-					SwinGame.StartReadingText (Color.Black, 20, Resources.GetFont ("Courier"), 500, 400);
-					while (SwinGame.ReadingText ()) 
-					{
-						SwinGame.ProcessEvents ();
-						this.Draw ();
-					}
-					_name = SwinGame.TextReadAsASCII ();
-					using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
-					{
-						foreach (Block b in _timetable.Times) 
-						{
-							File.Write (b.Availability);
-						}
-					}
-					//textEntered = true;
+					GlobalState.State = State.Manage;
+					SwinGame.EndReadingText ();
+					return;
+				} 
+			}
+			//Saves the user's data with the input as the corresponding file name
+			_name = SwinGame.TextReadAsASCII ();
+			using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
+			{
+				foreach (Block b in _timetable.Times) 
+				{
+					File.Write (b.Availability);
 				}
-			} while (!mouseCheck || !textEntered);
+			}
+			GlobalState.State = State.Back;
 		}
 
 		public void Draw ()

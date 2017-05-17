@@ -66,6 +66,12 @@ namespace TTCompare
 			}
 		}
 
+		public float X {
+			get {
+				return _x;
+			}
+		}
+
 		public Color Color {
 			get {
 				return _color;
