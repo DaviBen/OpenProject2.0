@@ -123,6 +123,7 @@ namespace TTCompare
 
 			//Set the _toChange trigger back to false
 			_toChange = false;
+			SwinGame.Delay (500);
 		}
 
 		/// <summary>
