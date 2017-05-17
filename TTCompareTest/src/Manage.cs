@@ -137,7 +137,7 @@ namespace TTCompare
 			//Reads user input
 			SwinGame.StartReadingText (Color.Black, 20, Resources.GetFont ("Courier"), 500, 400);
 
-			//While the user is entering text
+			//While the user is entering text into the dialog
 			while (SwinGame.ReadingText ()) 
 			{
 				//Process user input
