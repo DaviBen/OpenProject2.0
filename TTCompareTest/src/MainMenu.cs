@@ -34,10 +34,10 @@ namespace TTCompare
 		/// </summary>
 		public void Handle ()
 		{
-			//Initialize the result to null
+			//Initialize the result of the command loop to null
 			string result = null;
 
-			//While the result string is null or the window close is requested by the user
+			//While the result string is null or the window close is not requested by the user
 			while ((result == null)&&(!(SwinGame.WindowCloseRequested())))
 			{
 				//Process user input

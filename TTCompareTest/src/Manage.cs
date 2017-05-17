@@ -18,6 +18,9 @@ namespace TTCompare
 		Availability _currentState = Availability.N;
 		Availability _changeTo = Availability.Y;
 
+		/// <summary>
+		/// The class to control the manage menu
+		/// </summary>
 		public Manage ()
 		{
 			_buttons = new List<Button> ();
@@ -25,6 +28,9 @@ namespace TTCompare
 			Fill_buttons ();
 		}
 
+		/// <summary>
+		/// Adds the back, save and change all buttons to the array to be placed on the screen
+		/// </summary>
 		public void Fill_buttons ()
 		{
 			_buttons.Add (new Button (Color.DarkGray, 0, 	550, 50, 100, "Back", 3, "Back"));
@@ -32,17 +38,31 @@ namespace TTCompare
 			_buttons.Add (new Button (Color.DarkGray, 0, 	0, 	 50, 200, "Change All", 3, "Change"));
 		}
 
+		/// <summary>
+		/// Method to handle user input and run the main command loop of the manage menu
+		/// </summary>
 		public void Handle ()
 		{
+			//Display and create the timetable
 			_timetabledisplayed = true;
 			_timetable.Create ();
+
+			//Initialize the result of the command loop to null
 			string result = null;
+
+			//While the result string is null or the window close is not requested by the user
 			while ((result == null)&&(!(SwinGame.WindowCloseRequested())))
 			{
+				//Process user input
 				SwinGame.ProcessEvents ();
+
+				//Draw the manage menu
 				this.Draw ();
+
+				//If the user clicks or holds the left mouse button call the clicked function and set result to the return string
 				if (SwinGame.MouseClicked (MouseButton.LeftButton)) 
 				{
+					//Add all blocks in the timetable to the NotYetAltered list, part of the click and drag functionality
 					foreach (Block b in _timetable.Times) 
 					{
 						b.NotYetAltered = true;
@@ -54,6 +74,8 @@ namespace TTCompare
 					result = this.clicked (SwinGame.MousePosition ());
 				}
 			}
+
+			//Check the value result picked up from the button clicked and navigate to the menu or function requested
 			switch (result)
 			{
 			case "Back":
@@ -71,10 +93,12 @@ namespace TTCompare
 			}
 		}
 
-		//Allows user to change all blocks to YES, MAYBE or NO at once
+		/// <summary>
+		/// Method that allows the user to change all blocks at once
+		/// </summary>
 		private void ChangeAll ()
 		{
-			//Checks what the current state is and changes all the blocks accordingly
+			//Checks what the current state is and set the state to change to accordingly
 			switch (_currentState) 
 			{
 				case Availability.Y:
@@ -91,23 +115,37 @@ namespace TTCompare
 					break;
 			}
 
+			//Change the state of all the blocks
 			foreach (Block b in _timetable.Times) 
 			{
 				b.Availability = _changeTo;
 			}
 
+			//Set the _toChange trigger back to false
 			_toChange = false;
 		}
 
+		/// <summary>
+		/// Method to save entered data into a textfile and save it
+		/// </summary>
 		private void Save ()
 		{
+			//Hides the timetable in the draw function called in the save loop
 			_timetabledisplayed = false;
-			//Reads user input while back button hasn't been clicked
+
+			//Reads user input
 			SwinGame.StartReadingText (Color.Black, 20, Resources.GetFont ("Courier"), 500, 400);
+
+			//While the user is entering text
 			while (SwinGame.ReadingText ()) 
 			{
+				//Process user input
 				SwinGame.ProcessEvents ();
+
+				//Draw the main menu
 				this.Draw ();
+
+				//If the user clicks the back button stop saving
 				if (SwinGame.MouseClicked (MouseButton.LeftButton) && this.clicked (SwinGame.MousePosition ()) == "Back") 
 				{
 					GlobalState.State = State.Manage;
@@ -115,7 +153,8 @@ namespace TTCompare
 					return;
 				} 
 			}
-			//Saves the user's data with the input as the corresponding file name
+
+			//Saves the user's data with the input as the corresponding file name adding a .txt
 			_name = SwinGame.TextReadAsASCII ();
 			using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
 			{
@@ -124,16 +163,25 @@ namespace TTCompare
 					File.Write (b.Availability);
 				}
 			}
+
+			//Set the global state to back so the user is directed to the main menu
 			GlobalState.State = State.Back;
 		}
 
+		/// <summary>
+		/// Method to output the main menu to the screen, including buttons and text. Called by the command loops.
+		/// </summary>
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
+
+			//If "Change ALl" was clicked, run the function
 			if (_toChange) 
 			{
 				ChangeAll ();
 			}
+
+			//Check if the user is saving and display the relevant screen
 			if (_timetabledisplayed)
 			{
 				TTDraw ();
@@ -155,7 +203,8 @@ namespace TTCompare
 
 		private void TTDraw ()
 		{
-			//I can probs think of a clever loop for this but it is do late at night for the thinking now (Lewis)
+			//Display the timetable
+			//TODO loop this text drawing
 			SwinGame.DrawText ("Monday", Color.Black, 8, 100);
 			SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
 			SwinGame.DrawText ("Wednesday", Color.Black, 8, 140);
@@ -190,6 +239,11 @@ namespace TTCompare
 			_timetable.Draw ();
 		}
 
+		/// <summary>
+		/// A utility method to check which button on the main menu was clicked and return it's value
+		/// </summary>
+		/// <param name="pt">A 2D point on the screen</param>
+		/// <returns>string</returns>
 		public string clicked (Point2D pt)
 		{
 			foreach (Button b in _buttons)
@@ -199,6 +253,8 @@ namespace TTCompare
 					return b.Value;
 				}
 			}
+
+			//If the timetable is displayed, also check the blocks
 			if (_timetabledisplayed)
 			{
 				_timetable.clicked (pt);	
