@@ -15,6 +15,17 @@ namespace TTCompare
 		private string _value;
 		private bool _notYetAltered = true;
 
+		/// <summary>
+		/// Class to represent a button on the screen
+		/// </summary>
+		/// <param name="color">color of the button</param>
+		/// <param name="x">x coordinate of the button in pixels</param>
+		/// <param name="y">y coordinate of the button in pixels</param>
+		/// <param name="height">height of the button in pixels</param>
+		/// <param name="width">width of the button in pixels</param>
+		/// <param name="text">Text to be displayed on the button</param>
+		/// <param name="scale">Determines the position of the text on the button</param>
+		/// <param name="value">The string returned when the button is clicked</param>
 		public Button (Color color, float x, float y, int height, int width, string text, int scale, string value)
 		{
 			_color = color;
@@ -27,20 +38,29 @@ namespace TTCompare
 			_value = value;
 		}
 
+
 		public bool NotYetAltered {
 			get { return _notYetAltered; }
 			set { _notYetAltered = value; }
 		}
 
+		/// <summary>
+		/// Method to draw the button to the screen
+		/// </summary>
 		public void Draw ()
 		{
 			SwinGame.FillRectangle (_color, _x, _y, _width, _height);
+
 			// Centre-aligns the text in the buttons
 			int X = (int)_x + (_width - _text.ToCharArray ().Length) / _scale;
 			int Y = (int)_y + (_height - 15) / 2;
 			SwinGame.DrawText (_text, Color.Black, Resources.GetFont ("Courier"), X, Y);
+
+			//Add a outline when the button is hovered over by calling the hoverover function
 			HoverOverRectangle (SwinGame.MousePosition ());
 		}
+
+		// TODO: I think this method can be removed
 		public void MouseIsOver (Point2D pt)
 		{
 			if (SwinGame.PointInRect (pt, _x, _y, _width, _height)) {
@@ -48,7 +68,12 @@ namespace TTCompare
 				SwinGame.RefreshScreen ();
 			}
 		}
-		// Checks if the button is at the specified location
+
+		/// <summary>
+		/// Method to check if the button is located at the passed in point
+		/// </summary>
+		/// <param name="pt">2D point to be checked</param>
+		/// <returns>bool</returns>
 		public bool IsAt (Point2D pt)
 		{
 			if (SwinGame.PointInRect (pt, _x, _y, _width, _height)) {
@@ -56,7 +81,11 @@ namespace TTCompare
 			}
 			return false;
 		}
-		// Gives a black outline to a button if the mouse is hovering over it
+
+		/// <summary>
+		/// Called by the draw method, Gives a black outline to a button if the mouse is hovering over it 
+		/// </summary>
+		/// <param name="pt">2D point to be checked</param>
 		private void HoverOverRectangle (Point2D pt)
 		{
 			if (this.IsAt (pt))
@@ -66,32 +95,54 @@ namespace TTCompare
 
 		}
 
-		public string Value {
-			get {
+		/// <summary>
+		/// readonly property to return the value of the button
+		/// </summary>
+		public string Value
+		{
+			get
+			{
 				return _value;
 			}
 		}
 
-		public float X {
-			get {
+		/// <summary>
+		/// Property to get the x coordinate of a button
+		/// </summary>
+		public float X
+		{
+			get
+			{
 				return _x;
 			}
 		}
 
-		public Color Color {
-			get {
+		/// <summary>
+		/// Property to get/set the color of the button
+		/// </summary>
+		public Color Color
+		{
+			get
+			{
 				return _color;
 			}
-			set {
+			set
+			{
 				_color = value;
 			}
 		}
 
-		public String Text {
-			get {
+		/// <summary>
+		/// Property to get/set the text on the button
+		/// </summary>
+		public String Text
+		{
+			get
+			{
 				return _text;
 			}
-			set {
+			set
+			{
 				_text = value;
 
 			}
