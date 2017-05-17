@@ -97,6 +97,7 @@ namespace TTCompare
 			}
 
 			_toChange = false;
+			SwinGame.Delay (500);
 		}
 
 		private void Save ()
