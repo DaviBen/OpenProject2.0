@@ -24,13 +24,18 @@ namespace TTCompare
 		List<int []> _maybe = new List<int[]>();
 		private Timetable _toPrint = new Timetable ();
 
+		/// <summary>
+		/// The class to control the compare menu
+		/// </summary>
 		public Compare ()
 		{
 			_buttons = new List<Button> ();
 			Fill_buttons ();
 		}
 
-		//Adds all on-screen buttons to a list of buttons
+		/// <summary>
+		/// Adds the back, compare and add buttons to the array to be placed on the screen
+		/// </summary>
 		public void Fill_buttons ()
 		{
 			_buttons.Add (new Button (Color.DarkGray, 0, 550, 50, 100, "Back", 3, "Back"));
@@ -38,22 +43,34 @@ namespace TTCompare
 			_buttons.Add (new Button (Color.DarkGray, 850, 525, 75, 200, "Add", 2, "Add"));
 		}
 
-		/*Operates the main functions for the GUI page
-		 * Initialises objects, handles user input
-		 */
+		/// <summary>
+		/// Method to handle user input and run the main command loop of the compare menu
+		/// </summary>
 		public void Handle ()
 		{
+			//Initialize the result of the command loop to null
 			string result = null;
+
+			//Create a timetable setting values to defaults
 			_toPrint.Create();
+
+			//While the result string is null or the window close is not requested by the user
 			while ((result == null)&&(!(SwinGame.WindowCloseRequested())))
 			{
+				//Process user input
 				SwinGame.ProcessEvents ();
+
+				//Draw the main menu
 				this.Draw ();
+
+				//If the user clicks the left mouse button call the clicked function and set result to the return string
 				if (SwinGame.MouseClicked (MouseButton.LeftButton))
 				{
 					result = this.clicked (SwinGame.MousePosition ());
 				}
 			}
+
+			//Check the value result picked up from the button clicked and navigate to the menu or function requested
 			switch (result)
 			{
 				case "Back":
@@ -72,7 +89,11 @@ namespace TTCompare
 			}
 		}
 
-		//Check if a specific user button has been selected and return its text/name
+		/// <summary>
+		/// A utility method to check if a specific user button has been selected and return its text/name
+		/// </summary>
+		/// <param name="pt">A 2D point on the screen</param>
+		/// <returns>string</returns>
 		private string UserSelected (Point2D pt)
 		{
 			foreach (Button b in _buttons)
@@ -85,27 +106,36 @@ namespace TTCompare
 			return null;
 		}
 
-		//Draw contents to the screen
+		/// <summary>
+		/// Method to output the compare menu to the screen, including buttons and text. Called by the command loops.
+		/// </summary>
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
+
+			//Draw the various text elements to the screen
 			SwinGame.DrawText ("Loaded Timetables:", Color.Black, Resources.GetFont("Courier"), 800, 80);
 			string output = "Select 'ADD' to add a timetable";
 			int offset = 7*output.ToCharArray ().Length / 2;
 			SwinGame.DrawText (output, Color.Black, Resources.GetFont("Courier"), 500-offset , 370);
 			int y = 105;
+
+			//Draw the filenames to the screen, moving the y down every name drawn
 			foreach (string s in _TTnames)
 			{
 				SwinGame.DrawText (s, Color.Black,Resources.GetFont("Courier"), 800, y);
 				y += 25;
 			}
+
+			//Draw the buttons to the screen
 			foreach (Button b in _buttons)
 			{
 				// Compare button only displays when there are enough timetables selected to compare
 				if (b.Value == "Compare" && _toCompare.Count >= 2) 
 				{
 					b.Draw ();
-				} else if (b.Value != "Compare") 
+				}
+				else if (b.Value != "Compare") 
 				{
 					b.Draw();
 				}
@@ -114,7 +144,11 @@ namespace TTCompare
 			SwinGame.RefreshScreen (60);
 		}
 
-		//Controls user input
+		/// <summary>
+		/// A utility method to check which button on the main menu was clicked and return it's value
+		/// </summary>
+		/// <param name="pt">A 2D point on the screen</param>
+		/// <returns>string</returns>
 		public string clicked (Point2D pt)
 		{
 			foreach (Button b in _buttons)
@@ -127,14 +161,24 @@ namespace TTCompare
 			return null;
 		}
 
-		//Loads the text files specified by the user and adds to the list of timetables to compare
+		/// <summary>
+		/// Method to load a requested file into the list of files
+		/// </summary>
 		private void LoadFile ()
 		{
+			//Initialize the result of the command loop to null
 			string result = null;
+
+			//Reads user input
 			SwinGame.StartReadingText(Color.Black, 20, Resources.GetFont("Courier"), 500, 400);
+
+			//While the result string is null or the window close is not requested by the user
 			while ((SwinGame.ReadingText() && (GlobalState.State != State.Back)))
 			{
+				//Process user input
 				SwinGame.ProcessEvents();
+
+				//If the user clicks the back button stop loading
 				if (SwinGame.MouseClicked (MouseButton.LeftButton))
 				{
 					result = this.clicked (SwinGame.MousePosition ());
@@ -149,6 +193,8 @@ namespace TTCompare
 				}
 				this.Draw ();
 			}
+
+			//Tries to read the file requested (adding file path) then sanatize it with the format method before adding it to the lists
 			string _filename = SwinGame.TextReadAsASCII();
 			if (!(GlobalState.State == State.Back))
 			{
@@ -168,10 +214,9 @@ namespace TTCompare
 			}
 		}
 
-		/* Compare functionality is a modified version of the code from iteration 1
-		 * Originally written by PT, modified for iteration 2 by BD
-		 */
-		// Compares the times in the selected timetables and stores the results in a timetable object
+		/// <summary>
+		/// Compares the times in the selected timetables and stores the results in a timetable object
+		/// </summary>
 		private void CompareTimetables ()
 		{
 			for (int k = 0; k < _toCompare.Count - 1; k++) {
@@ -222,7 +267,9 @@ namespace TTCompare
 			}
 		}
 
-		// Prints the timetable of compared times and handles corresponding user input
+		/// <summary>
+		/// Prints the timetable of compared times and handles corresponding user input
+		/// </summary>
 		private void OutputTimetableInfo ()
 		{
 			//Display the data as a timetable
@@ -248,17 +295,23 @@ namespace TTCompare
 			} while (result != "Back");
 		}
 
-		// Input is a string of text from a text file, populates a text file with the data
+		/// <summary>
+		/// Utility method that takes in a string from a textfile and returns a timetable of the values
+		/// </summary>
 		private Timetable FormatInputForTimetableEntry (String text)
 		{
 			char[] chars = text.ToCharArray ();
 			Timetable result = new Timetable ();
 			result.Create ();
+
+			//Pass the array to the timetables populate method
 			result.PopulateTimetable (chars);
 			return result;
 		}
 
-		// Format data to a printable format
+		/// <summary>
+		/// Format data to a printable format
+		/// </summary>
 		private String FormatListForOutput (int [] date)
 		{
 			string str;
@@ -273,11 +326,12 @@ namespace TTCompare
 			return str;
 		}
 
-		//Print the labels for the timetable, calls the timetable draw function as well
+		/// <summary>
+		/// Print the labels for the timetable, calls the timetable draw function as well
+		/// </summary>
 		private void TTDraw ()
 		{
 			SwinGame.DrawText ("Available Meeting Times:", Color.Black, 500, 50);
-			//I can probs think of a clever loop for this but it is do late at night for the thinking now (Lewis)
 			SwinGame.DrawText ("Monday", Color.Black, 8, 100);
 			SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
 			SwinGame.DrawText ("Wednesday", Color.Black, 8, 140);

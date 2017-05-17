@@ -170,7 +170,7 @@ namespace TTCompare
 		}
 
 		/// <summary>
-		/// Method to output the main menu to the screen, including buttons and text. Called by the command loops.
+		/// Method to output the manage menu to the screen, including buttons and text. Called by the command loops.
 		/// </summary>
 		public void Draw ()
 		{
