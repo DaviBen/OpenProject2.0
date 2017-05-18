@@ -69,6 +69,7 @@ namespace TTCompare
 					result = this.clicked (SwinGame.MousePosition ());
 				}
 				//Used for click and drag when changing timetable blocks
+				//Only in effect when the mouse is within the boundaries of the timetable
 				else if (SwinGame.MouseDown (MouseButton.LeftButton) &&
 				         SwinGame.MouseY() > 90 && SwinGame.MouseY() < 230 &&
 				         SwinGame.MouseX() > 20 )
@@ -125,7 +126,7 @@ namespace TTCompare
 
 			//Set the _toChange trigger back to false
 			_toChange = false;
-			SwinGame.Delay (500);
+			//SwinGame.Delay (500);
 		}
 
 		/// <summary>
