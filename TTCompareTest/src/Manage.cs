@@ -167,8 +167,8 @@ namespace TTCompare
 			ValidateNameEntry (_name.ToCharArray());
 			if (!correctName) 
 			{
-				//this.Draw();
 				this.Save ();
+				return;
 			}
 
 			using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
@@ -195,18 +195,15 @@ namespace TTCompare
 				if (c == '*') 
 				{
 					correctName = false;
-					Console.WriteLine ("false 1");
 					return;
 				}
 			}
+			//Confirms that the user has entered data
 			if (name.Length == 0)
 			{
 				correctName = false;
-				Console.WriteLine ("false 2");
 				return;
 			}
-
-			Console.WriteLine ("true");
 		}
 		/// <summary>
 		/// Method to output the manage menu to the screen, including buttons and text. Called by the command loops.
@@ -220,13 +217,6 @@ namespace TTCompare
 			{
 				ChangeAll ();
 			}
-			//Message to display if the name entered is blocked by the Access Control Lists
-			if (!correctName) 
-			{
-				string outputSanitize = "Invalid Name. Please try again";
-				int offsetSanitize = 7 * outputSanitize.ToCharArray ().Length / 2;
-				SwinGame.DrawText (outputSanitize, Color.Black, Resources.GetFont ("Courier"), 500 - offsetSanitize, 350);
-			}
 			//Check if the user is saving and display the relevant screen
 			if (_timetabledisplayed)
 			{
@@ -238,10 +228,19 @@ namespace TTCompare
 			}
 			else
 			{
+				//Display the Name Entry screen
 				SwinGame.ClearScreen ();
 				SwinGame.DrawText ("Press ENTER to save", Color.Black, Resources.GetFont ("Courier"), 435, 385);	
 				SwinGame.DrawText ("Name: ", Color.Black, Resources.GetFont ("Courier"), 450, 400);
 				_buttons [0].Draw ();
+				//Message to display if the name entered is blocked by the Access Control Lists
+				if (!correctName) 
+				{
+					//variables used to properly centre the text
+					string outputSanitize = "Invalid Name. Please try again";
+					int offsetSanitize = 7 * outputSanitize.ToCharArray ().Length / 2;
+					SwinGame.DrawText (outputSanitize, Color.Black, Resources.GetFont ("Courier"), 500 - offsetSanitize, 350);
+				}
 			}
 
 			SwinGame.RefreshScreen (60);
