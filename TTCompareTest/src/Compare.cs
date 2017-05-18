@@ -1,13 +1,6 @@
 ﻿/* The Compare Timetables screen for the GUI
  * includes functionality to draw itself and handle any user input
  */
-/*				for (int q = 0; q <= 50; q++) 
-				{
-					SwinGame.ProcessEvents ();
-					SwinGame.DrawText ("b1", Color.Black, 400, 200);
-					SwinGame.RefreshScreen ();
-				}
-*/
 using System;
 using System.IO;
 using SwinGameSDK;
@@ -22,6 +15,10 @@ namespace TTCompare
 		private List<String> _TTnames = new List<String> ();
 		List<int []> _yes = new List<int[]>();
 		List<int []> _maybe = new List<int[]>();
+		string result;
+		//Used to end text entry when user returns to Main Menu
+		bool backSelected = false;
+		bool nameFound = true;
 		private Timetable _toPrint = new Timetable ();
 
 		/// <summary>
@@ -49,7 +46,11 @@ namespace TTCompare
 		public void Handle ()
 		{
 			//Initialize the result of the command loop to null
-			string result = null;
+			/*backSelected is used to end text entry and return user to MainMenu
+			 * If backSelected was not used, the user has to click Back once to cancel text entry
+			 * and then again to return to Main Menu */
+			if (!backSelected) result = null;
+			else result = "Back";
 
 			//Create a timetable setting values to defaults
 			_toPrint.Create();
@@ -75,9 +76,12 @@ namespace TTCompare
 			{
 				case "Back":
 					GlobalState.State = State.Back;
+					backSelected = false;
+					_TTnames.Clear ();
+					_toCompare.Clear ();
 					break;
 				case "Add":
-					LoadFile ();
+					GetFileName ();
 					this.Handle ();
 					break;
 				case "Compare":
@@ -118,13 +122,20 @@ namespace TTCompare
 			string output = "Select 'ADD' to add a timetable";
 			int offset = 7*output.ToCharArray ().Length / 2;
 			SwinGame.DrawText (output, Color.Black, Resources.GetFont("Courier"), 500-offset , 370);
-			int y = 105;
 
+			int y = 105;
 			//Draw the filenames to the screen, moving the y down every name drawn
 			foreach (string s in _TTnames)
 			{
 				SwinGame.DrawText (s, Color.Black,Resources.GetFont("Courier"), 800, y);
 				y += 25;
+			}
+			// Message to display if name entered cannot be found
+			if (!nameFound) 
+			{
+				string outputNotFound = "Incorrect Name. Please try again";
+				int offsetNotFound = 7 * outputNotFound.ToCharArray ().Length / 2;
+				SwinGame.DrawText (outputNotFound, Color.Black, Resources.GetFont ("Courier"), 500 - offsetNotFound, 350);
 			}
 
 			//Draw the buttons to the screen
@@ -164,7 +175,7 @@ namespace TTCompare
 		/// <summary>
 		/// Method to load a requested file into the list of files
 		/// </summary>
-		private void LoadFile ()
+		private void GetFileName ()
 		{
 			//Initialize the result of the command loop to null
 			string result = null;
@@ -172,44 +183,49 @@ namespace TTCompare
 			//Reads user input
 			SwinGame.StartReadingText(Color.Black, 20, Resources.GetFont("Courier"), 500, 400);
 
-			//While the result string is null or the window close is not requested by the user
+			//While the user is entering text and hasn't selected to go back to the main menu
 			while ((SwinGame.ReadingText() && (GlobalState.State != State.Back)))
 			{
 				//Process user input
 				SwinGame.ProcessEvents();
 
 				//If the user clicks the back button stop loading
-				if (SwinGame.MouseClicked (MouseButton.LeftButton))
+				result = this.clicked (SwinGame.MousePosition ());
+				if (SwinGame.MouseClicked (MouseButton.LeftButton) && result == "Back")
 				{
-					result = this.clicked (SwinGame.MousePosition ());
-					switch (result)
-					{
-					case "Back":
-						GlobalState.State = State.Back;
-						break;
-					default:  
-						break;  
-					}
+					SwinGame.EndReadingText ();
+					backSelected = true;
+					return;
 				}
 				this.Draw ();
 			}
+			string name = SwinGame.TextReadAsASCII ();
+		
+			LoadFile (name);
 
-			//Tries to read the file requested (adding file path) then sanatize it with the format method before adding it to the lists
-			string _filename = SwinGame.TextReadAsASCII();
+		}
+
+		/// <summary>
+		/// Loads the file and validates wether it's in the correct format
+		/// </summary>
+		private void LoadFile (string filename)
+		{
 			if (!(GlobalState.State == State.Back))
 			{
 				try
 				{
-					using (StreamReader File = new StreamReader("..\\Debug\\" + _filename + ".txt"))
+					using (StreamReader File = new StreamReader ("..\\Debug\\" + filename + ".txt"))
 					{ 
-						_toCompare.Add(FormatInputForTimetableEntry(File.ReadLine()));
-						_TTnames.Add(_filename);
+						_toCompare.Add(FormatInputForTimetableEntry (File.ReadLine()));
+						_TTnames.Add(filename);
 					}
+					nameFound = true;
 				}
 				catch
 				{
 					Console.WriteLine ("Error");
-					//TODO Add real error message
+					nameFound = false;
+					Draw ();
 				}
 			}
 		}

@@ -15,6 +15,8 @@ namespace TTCompare
 		private bool _timetabledisplayed;
 		string _name;
 		bool _toChange = false;
+		bool newTimetable = false;
+		bool correctName = true;
 		Availability _currentState = Availability.N;
 		Availability _changeTo = Availability.Y;
 
@@ -44,8 +46,9 @@ namespace TTCompare
 		public void Handle ()
 		{
 			//Display and create the timetable
+			//New timetable prevents the timetable from being overridden if a user is returning from the Name Entry page
 			_timetabledisplayed = true;
-			_timetable.Create ();
+			if (!newTimetable) _timetable.Create ();
 
 			//Initialize the result of the command loop to null
 			string result = null;
@@ -150,16 +153,24 @@ namespace TTCompare
 				this.Draw ();
 
 				//If the user clicks the back button stop saving
-				if (SwinGame.MouseClicked (MouseButton.LeftButton) && this.clicked (SwinGame.MousePosition ()) == "Back") 
+				if (SwinGame.MouseClicked (MouseButton.LeftButton) && this.clicked (SwinGame.MousePosition ()) == "Back" ||
+				    SwinGame.KeyTyped (KeyCode.EscapeKey))
 				{
 					GlobalState.State = State.Manage;
 					SwinGame.EndReadingText ();
+					newTimetable = true;
 					return;
 				} 
 			}
 
-			//Saves the user's data with the input as the corresponding file name adding a .txt
 			_name = SwinGame.TextReadAsASCII ();
+			ValidateNameEntry (_name.ToCharArray());
+			if (!correctName) 
+			{
+				//this.Draw();
+				this.Save ();
+			}
+
 			using (StreamWriter File = new StreamWriter (_name + ".txt", false)) 
 			{
 				foreach (Block b in _timetable.Times) 
@@ -167,11 +178,36 @@ namespace TTCompare
 					File.Write (b.Availability);
 				}
 			}
-
+			// The next timetable accessed will be a new timetable
+			newTimetable = false;
 			//Set the global state to back so the user is directed to the main menu
 			GlobalState.State = State.Back;
 		}
+		/// <summary>
+		/// Validates the name entry.
+		/// </summary>
+		private void ValidateNameEntry (char [] name)
+		{
+			correctName = true;
+			//checks for invalid character "*"
+			foreach (char c in name) 
+			{
+				if (c == '*') 
+				{
+					correctName = false;
+					Console.WriteLine ("false 1");
+					return;
+				}
+			}
+			if (name.Length == 0)
+			{
+				correctName = false;
+				Console.WriteLine ("false 2");
+				return;
+			}
 
+			Console.WriteLine ("true");
+		}
 		/// <summary>
 		/// Method to output the manage menu to the screen, including buttons and text. Called by the command loops.
 		/// </summary>
@@ -179,12 +215,18 @@ namespace TTCompare
 		{
 			SwinGame.ClearScreen ();
 
-			//If "Change ALl" was clicked, run the function
+			//If "Change ALL" was clicked, run the function
 			if (_toChange) 
 			{
 				ChangeAll ();
 			}
-
+			//Message to display if the name entered is blocked by the Access Control Lists
+			if (!correctName) 
+			{
+				string outputSanitize = "Invalid Name. Please try again";
+				int offsetSanitize = 7 * outputSanitize.ToCharArray ().Length / 2;
+				SwinGame.DrawText (outputSanitize, Color.Black, Resources.GetFont ("Courier"), 500 - offsetSanitize, 350);
+			}
 			//Check if the user is saving and display the relevant screen
 			if (_timetabledisplayed)
 			{
