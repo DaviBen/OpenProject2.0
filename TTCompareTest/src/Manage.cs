@@ -18,6 +18,7 @@ namespace TTCompare
 		bool newTimetable = false;
 		bool correctName = true;
 		Availability _currentState = Availability.N;
+		Availability _avail = Availability.Y;
 		Availability _changeTo = Availability.Y;
 
 		/// <summary>
@@ -46,12 +47,16 @@ namespace TTCompare
 
 			for (int i = 0; i < 7; i++) 
 			{
+				//TODO: blue for debug, set to transparent later
 				_buttons.Add (new Button (Color.Blue, 60, 100 + (i * 20), 10, 15, "", 1, ((Day)i).ToString ()));
 			}
 
-
-			//SwinGame.DrawText ("Monday", Color.Black, 8, 100);
-			//SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
+			for (int i = 0; i < 24; i++) {
+				DateTime time = new DateTime (0);
+				time = time + TimeSpan.FromHours (i);
+				//TODO: blue for debug, set to transparent later
+				_buttons.Add (new Button (Color.Blue, 80 + (40 * i), 80, 10, 15, "", 1, time.ToString ("HH")));
+			}
 		}
 
 		/// <summary>
@@ -68,19 +73,16 @@ namespace TTCompare
 			string result = null;
 
 			//While the result string is null or the window close is not requested by the user
-			while ((result == null)&&(!(SwinGame.WindowCloseRequested())))
-			{
+			while ((result == null) && (!(SwinGame.WindowCloseRequested ()))) {
 				//Process user input
 				SwinGame.ProcessEvents ();
 
 				//Draw the manage menu
 				this.Draw ();
 				//If the user clicks or holds the left mouse button call the clicked function and set result to the return string
-				if (SwinGame.MouseClicked (MouseButton.LeftButton)) 
-				{
+				if (SwinGame.MouseClicked (MouseButton.LeftButton)) {
 					//Add all blocks in the timetable to the NotYetAltered list, part of the click and drag functionality
-					foreach (Block b in _timetable.Times) 
-					{
+					foreach (Block b in _timetable.Times) {
 						b.NotYetAltered = true;
 					}
 					result = this.clicked (SwinGame.MousePosition ());
@@ -88,28 +90,93 @@ namespace TTCompare
 				//Used for click and drag when changing timetable blocks
 				//Only in effect when the mouse is within the boundaries of the timetable
 				else if (SwinGame.MouseDown (MouseButton.LeftButton) &&
-				         SwinGame.MouseY() > 90 && SwinGame.MouseY() < 230 &&
-				         SwinGame.MouseX() > 20 )
-				{
+						 SwinGame.MouseY () > 90 && SwinGame.MouseY () < 230 &&
+						 SwinGame.MouseX () > 20) {
 					result = this.clicked (SwinGame.MousePosition ());
 				}
 			}
 
 			//Check the value result picked up from the button clicked and navigate to the menu or function requested
-			switch (result)
-			{
-			case "Back":
+			if (result == "Back") {
 				GlobalState.State = State.Back;
-				break;
-			case "Save":
+			} else if (result == "Save") {
 				Save ();
-				break;
-			case "Change":
+			} else if (result == "Change") {
 				_toChange = true;
 				Handle ();
+			} else if (result == null) { 
+			} else if (result.Contains ("day")) {
+				for (int i = 0; i < 7; i++) {
+					if (((Day)i).ToString () == result)
+						ChangeRow (i);
+					
+				}
+			} else if (result.Length < 3) {
+				for (int i = 0; i < 24; i++) {
+					if (i.ToString() == result)
+						ChangeCol (i);
+				}
+			} 
+		}
+
+		//changes the column to a next availability
+		//TODO: Unsure why each buttons changes whole timetable to N
+		//TODO: could be _avail shouldnt be global
+		private void ChangeCol (int col)
+		{
+			for (int i = 0; i < 7; i++) {
+				_timetable.Times [col, i].Availability = _avail;
+			}
+			_timetable.Draw ();
+			switch (_avail) {
+			case Availability.Y:
+				_avail = Availability.M;
 				break;
-			default:  
-				break;  
+			case Availability.M:
+				_avail = Availability.N;
+				break;
+			default:
+				_avail = Availability.Y;
+				break;
+			}
+		}
+
+		//changes the row to a next availability
+		//TODO: Unsure why each buttons changes whole timetable to N
+		//TODO: could be _avail shouldnt be global
+		private void ChangeRow (int row)
+		{
+			for (int i = 0; i < 48; i++) 
+			{
+				_timetable.Times [i, row].Availability = _avail;
+			}
+			_timetable.Draw ();
+			switch (_avail) {
+			case Availability.Y:
+				_avail = Availability.M;
+				break;
+			case Availability.M:
+				_avail = Availability.N;
+				break;
+			default:
+				_avail = Availability.Y;
+				break;
+			}
+		}
+
+		// Might be more useful to use this or not. Will see.
+		private void NextAvail (Availability avail)
+		{
+			switch (avail) {
+			case Availability.Y:
+				avail = Availability.M;
+				break;
+			case Availability.M:
+				avail = Availability.N;
+				break;
+			default:
+				avail = Availability.Y;
+				break;
 			}
 		}
 
@@ -274,39 +341,8 @@ namespace TTCompare
 				DateTime time = new DateTime (0);
 				time = time + TimeSpan.FromHours (i);
 				SwinGame.DrawText (time.ToString ("htt"), Color.Black, 80 + (40 * i), 80);
-
 			}
-			//SwinGame.DrawText ("Monday", Color.Black, 8, 100);
-			//SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
-			//SwinGame.DrawText ("Wednesday", Color.Black, 8, 140);
-			//SwinGame.DrawText ("Thursday", Color.Black, 8, 160);
-			//SwinGame.DrawText ("Friday", Color.Black, 8, 180);
-			//SwinGame.DrawText ("Saturday", Color.Black, 8, 200);
-			//SwinGame.DrawText ("Sunday", Color.Black, 8, 220);
-			//SwinGame.DrawText ("0AM", Color.Black, 80, 80);
-			//SwinGame.DrawText ("1AM", Color.Black, 120, 80);
-			//SwinGame.DrawText ("2AM", Color.Black, 160, 80);
-			//SwinGame.DrawText ("3AM", Color.Black, 200, 80);
-			//SwinGame.DrawText ("4AM", Color.Black, 240, 80);
-			//SwinGame.DrawText ("5AM", Color.Black, 280, 80);
-			//SwinGame.DrawText ("6AM", Color.Black, 320, 80);
-			//SwinGame.DrawText ("7AM", Color.Black, 360, 80);
-			//SwinGame.DrawText ("8AM", Color.Black, 400, 80);
-			//SwinGame.DrawText ("9AM", Color.Black, 440, 80);
-			//SwinGame.DrawText ("10AM", Color.Black, 480, 80);
-			//SwinGame.DrawText ("11AM", Color.Black, 520, 80);
-			//SwinGame.DrawText ("12AM", Color.Black, 560, 80);
-			//SwinGame.DrawText ("1PM", Color.Black, 600, 80);
-			//SwinGame.DrawText ("2PM", Color.Black, 640, 80);
-			//SwinGame.DrawText ("3PM", Color.Black, 680, 80);
-			//SwinGame.DrawText ("4PM", Color.Black, 720, 80);
-			//SwinGame.DrawText ("5PM", Color.Black, 760, 80);
-			//SwinGame.DrawText ("6PM", Color.Black, 800, 80);
-			//SwinGame.DrawText ("7PM", Color.Black, 840, 80);
-			//SwinGame.DrawText ("8PM", Color.Black, 880, 80);
-			//SwinGame.DrawText ("9PM", Color.Black, 920, 80);
-			//SwinGame.DrawText ("10PM", Color.Black, 960, 80);
-			//SwinGame.DrawText ("11PM", Color.Black, 1000, 80);
+
 			_timetable.Draw ();
 		}
 
