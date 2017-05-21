@@ -30,6 +30,11 @@ namespace TTCompare
 			Fill_buttons ();
 		}
 
+		private enum Day 
+		{
+			Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+		}
+
 		/// <summary>
 		/// Adds the back, save and change all buttons to the array to be placed on the screen
 		/// </summary>
@@ -38,6 +43,15 @@ namespace TTCompare
 			_buttons.Add (new Button (Color.DarkGray, 0, 	550, 50, 100, "Back", 3, "Back"));
 			_buttons.Add (new Button (Color.DarkGray, 850, 	525, 75, 200, "Save", 2, "Save"));
 			_buttons.Add (new Button (Color.DarkGray, 0, 	0, 	 50, 200, "Change All", 3, "Change"));
+
+			for (int i = 0; i < 7; i++) 
+			{
+				_buttons.Add (new Button (Color.Blue, 60, 100 + (i * 20), 10, 15, "", 1, ((Day)i).ToString ()));
+			}
+
+
+			//SwinGame.DrawText ("Monday", Color.Black, 8, 100);
+			//SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
 		}
 
 		/// <summary>
@@ -250,37 +264,49 @@ namespace TTCompare
 		{
 			//Display the timetable
 			//TODO loop this text drawing
-			SwinGame.DrawText ("Monday", Color.Black, 8, 100);
-			SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
-			SwinGame.DrawText ("Wednesday", Color.Black, 8, 140);
-			SwinGame.DrawText ("Thursday", Color.Black, 8, 160);
-			SwinGame.DrawText ("Friday", Color.Black, 8, 180);
-			SwinGame.DrawText ("Saturday", Color.Black, 8, 200);
-			SwinGame.DrawText ("Sunday", Color.Black, 8, 220);
-			SwinGame.DrawText ("0AM", Color.Black, 80, 80);
-			SwinGame.DrawText ("1AM", Color.Black, 120, 80);
-			SwinGame.DrawText ("2AM", Color.Black, 160, 80);
-			SwinGame.DrawText ("3AM", Color.Black, 200, 80);
-			SwinGame.DrawText ("4AM", Color.Black, 240, 80);
-			SwinGame.DrawText ("5AM", Color.Black, 280, 80);
-			SwinGame.DrawText ("6AM", Color.Black, 320, 80);
-			SwinGame.DrawText ("7AM", Color.Black, 360, 80);
-			SwinGame.DrawText ("8AM", Color.Black, 400, 80);
-			SwinGame.DrawText ("9AM", Color.Black, 440, 80);
-			SwinGame.DrawText ("10AM", Color.Black, 480, 80);
-			SwinGame.DrawText ("11AM", Color.Black, 520, 80);
-			SwinGame.DrawText ("12AM", Color.Black, 560, 80);
-			SwinGame.DrawText ("1PM", Color.Black, 600, 80);
-			SwinGame.DrawText ("2PM", Color.Black, 640, 80);
-			SwinGame.DrawText ("3PM", Color.Black, 680, 80);
-			SwinGame.DrawText ("4PM", Color.Black, 720, 80);
-			SwinGame.DrawText ("5PM", Color.Black, 760, 80);
-			SwinGame.DrawText ("6PM", Color.Black, 800, 80);
-			SwinGame.DrawText ("7PM", Color.Black, 840, 80);
-			SwinGame.DrawText ("8PM", Color.Black, 880, 80);
-			SwinGame.DrawText ("9PM", Color.Black, 920, 80);
-			SwinGame.DrawText ("10PM", Color.Black, 960, 80);
-			SwinGame.DrawText ("11PM", Color.Black, 1000, 80);
+			for (int i = 0; i < 7; i++) 
+			{
+				SwinGame.DrawText (((Day)i).ToString (), Color.Black, 8, 100 + (20 * i));
+			}
+
+			for (int i = 0; i < 24; i++) 
+			{
+				DateTime time = new DateTime (0);
+				time = time + TimeSpan.FromHours (i);
+				SwinGame.DrawText (time.ToString ("htt"), Color.Black, 80 + (40 * i), 80);
+
+			}
+			//SwinGame.DrawText ("Monday", Color.Black, 8, 100);
+			//SwinGame.DrawText ("Tuesday", Color.Black, 8, 120);
+			//SwinGame.DrawText ("Wednesday", Color.Black, 8, 140);
+			//SwinGame.DrawText ("Thursday", Color.Black, 8, 160);
+			//SwinGame.DrawText ("Friday", Color.Black, 8, 180);
+			//SwinGame.DrawText ("Saturday", Color.Black, 8, 200);
+			//SwinGame.DrawText ("Sunday", Color.Black, 8, 220);
+			//SwinGame.DrawText ("0AM", Color.Black, 80, 80);
+			//SwinGame.DrawText ("1AM", Color.Black, 120, 80);
+			//SwinGame.DrawText ("2AM", Color.Black, 160, 80);
+			//SwinGame.DrawText ("3AM", Color.Black, 200, 80);
+			//SwinGame.DrawText ("4AM", Color.Black, 240, 80);
+			//SwinGame.DrawText ("5AM", Color.Black, 280, 80);
+			//SwinGame.DrawText ("6AM", Color.Black, 320, 80);
+			//SwinGame.DrawText ("7AM", Color.Black, 360, 80);
+			//SwinGame.DrawText ("8AM", Color.Black, 400, 80);
+			//SwinGame.DrawText ("9AM", Color.Black, 440, 80);
+			//SwinGame.DrawText ("10AM", Color.Black, 480, 80);
+			//SwinGame.DrawText ("11AM", Color.Black, 520, 80);
+			//SwinGame.DrawText ("12AM", Color.Black, 560, 80);
+			//SwinGame.DrawText ("1PM", Color.Black, 600, 80);
+			//SwinGame.DrawText ("2PM", Color.Black, 640, 80);
+			//SwinGame.DrawText ("3PM", Color.Black, 680, 80);
+			//SwinGame.DrawText ("4PM", Color.Black, 720, 80);
+			//SwinGame.DrawText ("5PM", Color.Black, 760, 80);
+			//SwinGame.DrawText ("6PM", Color.Black, 800, 80);
+			//SwinGame.DrawText ("7PM", Color.Black, 840, 80);
+			//SwinGame.DrawText ("8PM", Color.Black, 880, 80);
+			//SwinGame.DrawText ("9PM", Color.Black, 920, 80);
+			//SwinGame.DrawText ("10PM", Color.Black, 960, 80);
+			//SwinGame.DrawText ("11PM", Color.Black, 1000, 80);
 			_timetable.Draw ();
 		}
 
