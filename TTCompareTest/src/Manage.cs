@@ -114,7 +114,7 @@ namespace TTCompare
 			} else if (result.Length < 3) {
 				for (int i = 0; i < 24; i++) {
 					if (i.ToString() == result)
-						ChangeCol (i);
+						ChangeCol (i*2);
 				}
 			} 
 		}
