@@ -102,7 +102,7 @@ namespace TTCompare
 		/// <summary>
 		/// Method that allows the user to change all blocks at once
 		/// </summary>
-		private void ChangeAll ()
+		public void ChangeAll ()
 		{
 			//Checks what the current state is and set the state to change to accordingly
 			switch (_currentState) 
@@ -186,7 +186,7 @@ namespace TTCompare
 		/// <summary>
 		/// Validates the name entry.
 		/// </summary>
-		private void ValidateNameEntry (char [] name)
+		public void ValidateNameEntry (char [] name)
 		{
 			correctName = true;
 			//checks for invalid character "*"
@@ -305,6 +305,30 @@ namespace TTCompare
 				_timetable.clicked (pt);	
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Readonly property to get the timetable (used in testing)
+		/// </summary>
+		/// <returns>Timetable</returns>
+		public Timetable Timetable
+		{
+			get
+			{
+				return _timetable;
+			}
+		}
+
+		/// <summary>
+		/// Readonly property to get the correctname bool (used in testing)
+		/// </summary>
+		/// <returns>bool</returns>
+		public bool CorrectName
+		{
+			get
+			{
+				return correctName;
+			}
 		}
 	}
 }

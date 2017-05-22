@@ -148,5 +148,19 @@ namespace TTCompare
 		{
 			return _times [hour, day].Availability;
 		}
+
+		/// <summary>
+		/// Method to convert timetable to string for easy testing
+		/// </summary>
+		/// <returns>string</returns>
+		public string GetString ()
+		{
+			string result = "";
+			foreach (Block b in _times) 
+			{
+				result += b.Availability;
+			}
+			return result;
+		}
 	}
 }

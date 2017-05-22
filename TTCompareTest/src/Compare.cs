@@ -208,7 +208,7 @@ namespace TTCompare
 		/// <summary>
 		/// Loads the file and validates wether it's in the correct format
 		/// </summary>
-		private void LoadFile (string filename)
+		public void LoadFile (string filename)
 		{
 			if (!(GlobalState.State == State.Back))
 			{
@@ -233,7 +233,7 @@ namespace TTCompare
 		/// <summary>
 		/// Compares the times in the selected timetables and stores the results in a timetable object
 		/// </summary>
-		private void CompareTimetables ()
+		public void CompareTimetables ()
 		{
 			for (int k = 0; k < _toCompare.Count - 1; k++) {
 				// each row of the timetable
@@ -382,6 +382,41 @@ namespace TTCompare
 			_toPrint.Draw ();
 		}
 
+		/// <summary>
+		/// Readonly property to get the list of text file names (used in testing)
+		/// </summary>
+		/// <returns>List<String></returns>
+		public List<String> TTnames
+		{
+			get
+			{
+				return _TTnames;
+			}
+		}
+
+		/// <summary>
+		/// Readonly property to get the list of timetables (used in testing)
+		/// </summary>
+		/// <returns>List<String></returns>
+		public List<Timetable> ToCompare
+		{
+			get
+			{
+				return _toCompare;
+			}
+		}
+
+		/// <summary>
+		/// Readonly property to get the final timetable (used in testing)
+		/// </summary>
+		/// <returns>Timetable</returns>
+		public Timetable ToPrint
+		{
+			get
+			{
+				return _toPrint;
+			}
+		}
 	}
 }
 
