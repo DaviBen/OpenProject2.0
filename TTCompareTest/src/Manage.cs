@@ -15,8 +15,11 @@ namespace TTCompare
 		private bool _timetabledisplayed;
 		string _name;
 		bool _toChange = false;
+		bool _changeRow = false;
+		bool _changeCol = false;
 		bool newTimetable = false;
 		bool correctName = true;
+		int rowOrCol;
 		Availability _currentState = Availability.N;
 		Availability _avail = Availability.Y;
 		Availability _changeTo = Availability.Y;
@@ -45,17 +48,17 @@ namespace TTCompare
 			_buttons.Add (new Button (Color.DarkGray, 850, 	525, 75, 200, "Save", 2, "Save"));
 			_buttons.Add (new Button (Color.DarkGray, 0, 	0, 	 50, 200, "Change All", 3, "Change"));
 
+			//Buttons for row selections
 			for (int i = 0; i < 7; i++) 
 			{
-				//TODO: blue for debug, set to transparent later
-				_buttons.Add (new Button (Color.Blue, 60, 100 + (i * 20), 10, 15, "", 1, ((Day)i).ToString ()));
+				_buttons.Add (new Button (Color.Transparent, 0, 100 + (i * 20), 15, 80, "", 1, ((Day)i).ToString ()));
 			}
 
+			// Buttons for column selections
 			for (int i = 0; i < 24; i++) {
 				DateTime time = new DateTime (0);
 				time = time + TimeSpan.FromHours (i);
-				//TODO: blue for debug, set to transparent later
-				_buttons.Add (new Button (Color.Blue, 80 + (40 * i), 80, 10, 15, "", 1, time.ToString ("HH")));
+				_buttons.Add (new Button (Color.Transparent, 80 + (40 * i), 80, 20, 35, "", 1, time.ToString ("HH")));
 			}
 		}
 
@@ -90,67 +93,132 @@ namespace TTCompare
 				//Used for click and drag when changing timetable blocks
 				//Only in effect when the mouse is within the boundaries of the timetable
 				else if (SwinGame.MouseDown (MouseButton.LeftButton) &&
-						 SwinGame.MouseY () > 90 && SwinGame.MouseY () < 230 &&
-						 SwinGame.MouseX () > 20) {
+						 SwinGame.MouseY () > 100 && SwinGame.MouseY () < 230 &&
+						 SwinGame.MouseX () > 80) {
 					result = this.clicked (SwinGame.MousePosition ());
 				}
 			}
 
+			string ColOrRowToChange = result;
+			if (result.Length < 3) {
+				result = "Col";
+			}
+			else if (result.Contains ("day")) {
+				result = "Row";
+			}
 			//Check the value result picked up from the button clicked and navigate to the menu or function requested
-			if (result == "Back") {
-				GlobalState.State = State.Back;
-			} else if (result == "Save") {
-				Save ();
-			} else if (result == "Change") {
-				_toChange = true;
-				Handle ();
-			} else if (result == null) { 
-			} else if (result.Contains ("day")) {
-				for (int i = 0; i < 7; i++) {
-					if (((Day)i).ToString () == result)
-						ChangeRow (i);
-					
-				}
-			} else if (result.Length < 3) {
-				for (int i = 0; i < 24; i++) {
-					if (i.ToString ("D2")== result)
-						ChangeCol (i*2);
-				}
+			switch (result)
+			{
+				case "Back": 
+					GlobalState.State = State.Back;
+					break;
+				case "Save": 
+					Save ();
+					break;
+				case "Change":
+					_toChange = true;
+					Handle ();
+					break;
+				case "Row":
+					_changeRow = true;
+					//Prevents the timetable from resetting 
+					//Before this was included, every block was set to NO and then the selected Row was toggled
+					newTimetable = true;
+					ToChange (ColOrRowToChange);
+					Handle ();
+					break;
+				case "Col":
+					_changeCol = true;
+					//Prevents the timetable from resetting 
+					//Before this was included, every block was set to NO and then the selected Col was toggled
+					newTimetable = true;
+					ToChange (ColOrRowToChange);
+					Handle ();
+					break;
+				default:
+					break;
 			} 
 		}
 
-		//changes the column to a next availability
-		//TODO: Unsure why each buttons changes whole timetable to N
-		//TODO: could be _avail shouldnt be global
+		/// <summary>
+		/// Changes to rowOrCol variable to reflect which row or col the user has selected 
+		/// </summary>
+		private void ToChange (string Test)
+		{
+			//User has selected a row (Day of the week)
+			if (_changeRow) 
+			{
+				for (int i = 0; i< 7; i++) 
+				{
+					if (((Day)i).ToString () == Test) 
+					{
+						rowOrCol = i;
+					}
+				}
+			}
+			//User has selected a column (Hour of the day)
+			else
+			{
+				for (int i = 0; i< 24; i++) 
+				{
+					if (i.ToString ("D2") == Test) 
+					{
+						rowOrCol = i * 2;
+					}
+						
+				}		
+			}
+		}
+
+		/// <summary>
+		/// Changes the availability of the selected columns
+		/// </summary>
 		private void ChangeCol (int col)
 		{
-			for (int i = 0; i < 7; i++) {
-				_timetable.Times [col, i].Availability = _avail;
+			//Toggles between the three availabilities for what should be changed to next
+			SwapAvailability ();
+			//Goes through timetable and changes all blocks in corresponding column
+			for (int j = 0; j< 7; j++) 
+			{
+				for (int i = 0; i< 48; i++) 
+				{
+					if (i == col) {
+						_timetable.Times [i, j].Availability = _avail;
+						_timetable.Times [i+1, j].Availability = _avail;
+					} 
+				}
 			}
-			_timetable.Draw ();
-			switch (_avail) {
-			case Availability.Y:
-				_avail = Availability.M;
-				break;
-			case Availability.M:
-				_avail = Availability.N;
-				break;
-			default:
-				_avail = Availability.Y;
-				break;
-			}
+			//Stops call for ChangeCol()
+			_changeCol = false;
 		}
 
-		//changes the row to a next availability
-		//TODO: Unsure why each buttons changes whole timetable to N
-		//TODO: could be _avail shouldnt be global
+		/// <summary>
+		/// Changes the availability of the selected row
+		/// </summary>
 		private void ChangeRow (int row)
 		{
-			for (int i = 0; i < 48; i++) 
+			//Toggles between the three availabilities for what should be changed to next
+			SwapAvailability ();
+			//Goes through timetable and changes all blocks in corresponding row
+			for (int j = 0; j< 7; j++) 
 			{
-				_timetable.Times [i, row].Availability = _avail;
+				for (int i = 0; i< 48; i++) 
+				{
+					if (j == row) 
+					{
+						_timetable.Times [i, j].Availability = _avail;
+					}
+				}
 			}
-			_timetable.Draw ();
+			//Stops call for ChangeRow()
+			_changeRow = false;
+		}
+
+		/// <summary>
+		/// Toggles the availability variable
+		/// </summary>
+		private void SwapAvailability ()
+		{
 			switch (_avail) {
 			case Availability.Y:
 				_avail = Availability.M;
@@ -160,22 +228,6 @@ namespace TTCompare
 				break;
 			default:
 				_avail = Availability.Y;
-				break;
-			}
-		}
-
-		// Might be more useful to use this or not. Will see.
-		private void NextAvail (Availability avail)
-		{
-			switch (avail) {
-			case Availability.Y:
-				avail = Availability.M;
-				break;
-			case Availability.M:
-				avail = Availability.N;
-				break;
-			default:
-				avail = Availability.Y;
 				break;
 			}
 		}
@@ -210,7 +262,6 @@ namespace TTCompare
 
 			//Set the _toChange trigger back to false
 			_toChange = false;
-			//SwinGame.Delay (500);
 		}
 
 		/// <summary>
@@ -298,6 +349,15 @@ namespace TTCompare
 			{
 				ChangeAll ();
 			}
+			//Checks if the user has selected to change an entire row or column
+			else if (_changeRow) 
+			{
+                ChangeRow (rowOrCol);
+			} else if (_changeCol) 
+			{
+				ChangeCol (rowOrCol);
+			}
+
 			//Check if the user is saving and display the relevant screen
 			if (_timetabledisplayed)
 			{
@@ -327,22 +387,20 @@ namespace TTCompare
 			SwinGame.RefreshScreen (60);
 		}
 
+		//Display the timetable
 		private void TTDraw ()
 		{
-			//Display the timetable
-			//TODO loop this text drawing
+			//Draw titles
 			for (int i = 0; i < 7; i++) 
 			{
 				SwinGame.DrawText (((Day)i).ToString (), Color.Black, 8, 100 + (20 * i));
 			}
-
 			for (int i = 0; i < 24; i++) 
 			{
 				DateTime time = new DateTime (0);
 				time = time + TimeSpan.FromHours (i);
 				SwinGame.DrawText (time.ToString ("htt"), Color.Black, 80 + (40 * i), 80);
 			}
-
 			_timetable.Draw ();
 		}
 
