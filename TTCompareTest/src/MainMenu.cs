@@ -72,7 +72,9 @@ namespace TTCompare
 		/// </summary>
 		public void Draw ()
 		{
-			SwinGame.ClearScreen ();
+			SwinGame.ClearScreen (SwinGame.RGBColor (50, 156, 255));
+			SwinGame.LoadBitmapNamed ("logo", "background2.png");
+			SwinGame.DrawBitmap ("logo", 400, 100);
 
 			//Draw the title to the screen
 			SwinGame.DrawText ("Timetable Comparer", Color.Black, Resources.GetFont("Courier"), 425, 100);
@@ -82,7 +84,6 @@ namespace TTCompare
 			{
 				b.Draw ();
 			}
-
 			//Refresh the screen so the menu is visable to the user
 			SwinGame.RefreshScreen (60);
 		}

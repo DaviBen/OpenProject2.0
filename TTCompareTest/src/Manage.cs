@@ -59,6 +59,7 @@ namespace TTCompare
 				time = time + TimeSpan.FromHours (i);
 				_buttons.Add (new Button (Color.Transparent, 80 + (40 * i), 80, 20, 35, "", 1, time.ToString ("HH")));
 			}
+
 		}
 
 		/// <summary>
@@ -343,7 +344,8 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.ClearScreen ();
-
+			SwinGame.LoadBitmapNamed ("background", "background.png");
+			SwinGame.DrawBitmap ("background", 0, 0);
 			//If "Change ALL" was clicked, run the function
 			if (_toChange) 
 			{
@@ -370,7 +372,7 @@ namespace TTCompare
 			else
 			{
 				//Display the Name Entry screen
-				SwinGame.ClearScreen ();
+				SwinGame.ClearScreen (SwinGame.RGBColor (50, 156, 255));
 				SwinGame.DrawText ("Press ENTER to save", Color.Black, Resources.GetFont ("Courier"), 435, 385);	
 				SwinGame.DrawText ("Name: ", Color.Black, Resources.GetFont ("Courier"), 450, 400);
 				_buttons [0].Draw ();
@@ -393,7 +395,7 @@ namespace TTCompare
 			//Draw titles
 			for (int i = 0; i < 7; i++) 
 			{
-				SwinGame.DrawText (((Day)i).ToString (), Color.Black, 8, 100 + (20 * i));
+				SwinGame.DrawText (((Day)i).ToString (), Color.Black, 3, 100 + (20 * i));
 			}
 			for (int i = 0; i < 24; i++) 
 			{

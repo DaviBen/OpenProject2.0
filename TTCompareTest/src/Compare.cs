@@ -115,7 +115,7 @@ namespace TTCompare
 		/// </summary>
 		public void Draw ()
 		{
-			SwinGame.ClearScreen ();
+			SwinGame.ClearScreen (SwinGame.RGBColor(50,156,255));
 
 			//Draw the various text elements to the screen
 			SwinGame.DrawText ("Loaded Timetables:", Color.Black, Resources.GetFont("Courier"), 800, 80);
