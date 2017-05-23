@@ -21,7 +21,6 @@ namespace TTCompare
 		bool correctName = true;
 		int rowOrCol;
 		Availability _currentState = Availability.N;
-		Availability _avail = Availability.Y;
 		Availability _changeTo = Availability.Y;
 
 		/// <summary>
@@ -54,7 +53,7 @@ namespace TTCompare
 				_buttons.Add (new Button (Color.Transparent, 0, 100 + (i * 20), 15, 80, "", 1, ((Day)i).ToString ()));
 			}
 
-			// Buttons for column selections
+			//Buttons for column selections
 			for (int i = 0; i < 24; i++) {
 				DateTime time = new DateTime (0);
 				time = time + TimeSpan.FromHours (i);
@@ -82,6 +81,7 @@ namespace TTCompare
 
 				//Draw the manage menu
 				this.Draw ();
+
 				//If the user clicks or holds the left mouse button call the clicked function and set result to the return string
 				if (SwinGame.MouseClicked (MouseButton.LeftButton)) {
 					//Add all blocks in the timetable to the NotYetAltered list, part of the click and drag functionality
@@ -89,6 +89,7 @@ namespace TTCompare
 						b.NotYetAltered = true;
 					}
 					result = this.clicked (SwinGame.MousePosition ());
+
 				}
 				//Used for click and drag when changing timetable blocks
 				//Only in effect when the mouse is within the boundaries of the timetable
@@ -100,6 +101,8 @@ namespace TTCompare
 			}
 
 			string ColOrRowToChange = result;
+			if (result == null)
+				return;
 			if (result.Length < 3) {
 				result = "Col";
 			}
@@ -176,7 +179,7 @@ namespace TTCompare
 		private void ChangeCol (int col)
 		{
 			//Toggles between the three availabilities for what should be changed to next
-			SwapAvailability ();
+			Availability _avail = SwapAvailability (_timetable.Times [col, 0].Availability);
 			//Goes through timetable and changes all blocks in corresponding column
 			for (int j = 0; j< 7; j++) 
 			{
@@ -198,7 +201,7 @@ namespace TTCompare
 		private void ChangeRow (int row)
 		{
 			//Toggles between the three availabilities for what should be changed to next
-			SwapAvailability ();
+			Availability _avail = SwapAvailability (_timetable.Times [0, row].Availability);
 			//Goes through timetable and changes all blocks in corresponding row
 			for (int j = 0; j< 7; j++) 
 			{
@@ -217,18 +220,15 @@ namespace TTCompare
 		/// <summary>
 		/// Toggles the availability variable
 		/// </summary>
-		private void SwapAvailability ()
+		private Availability SwapAvailability (Availability avail)
 		{
-			switch (_avail) {
+			switch (avail) {
 			case Availability.Y:
-				_avail = Availability.M;
-				break;
+				return Availability.M;
 			case Availability.M:
-				_avail = Availability.N;
-				break;
+				return Availability.N;
 			default:
-				_avail = Availability.Y;
-				break;
+				return Availability.Y;
 			}
 		}
 
