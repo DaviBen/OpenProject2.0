@@ -13,7 +13,7 @@ namespace TTCompare
 		private string _text;
 		private int _scale;
 		private string _value;
-		private bool _notYetAltered = true;
+		private bool _notYetAltered;
 
 		/// <summary>
 		/// Class to represent a button on the screen
@@ -36,6 +36,7 @@ namespace TTCompare
 			_text = text;
 			_scale = scale;
 			_value = value;
+			NotYetAltered = true;
 		}
 
 
