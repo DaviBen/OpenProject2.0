@@ -73,11 +73,12 @@ namespace TTCompare
 		public void Draw ()
 		{
 			SwinGame.ClearScreen (SwinGame.RGBColor (50, 156, 255));
-			SwinGame.LoadBitmapNamed ("logo", "background2.png");
-			SwinGame.DrawBitmap ("logo", 400, 100);
 
 			//Draw the title to the screen
-			SwinGame.DrawText ("Timetable Comparer", Color.Black, Resources.GetFont("Courier"), 425, 100);
+			SwinGame.LoadBitmapNamed ("logo", "background2.png");
+			SwinGame.DrawBitmap ("logo", 0, 0);
+		
+			//SwinGame.DrawText ("Timetable Comparer", Color.Black, Resources.GetFont("Courier"), 425, 100);
 
 			//Foreach button in the list, tell it to draw
 			foreach (Button b in _buttons) 
