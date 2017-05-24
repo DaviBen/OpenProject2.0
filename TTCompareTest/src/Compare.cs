@@ -291,6 +291,8 @@ namespace TTCompare
 			//Display the data as a timetable
 			string result = null;
 			SwinGame.ClearScreen ();
+			SwinGame.LoadBitmapNamed ("background", "background.png");
+			SwinGame.DrawBitmap ("background", 0, 0);
 			do {
 				SwinGame.ProcessEvents ();
 
@@ -305,9 +307,7 @@ namespace TTCompare
 					_toCompare.Clear ();
 					_toPrint.Times.Initialize ();
 					_TTnames.Clear ();
-				}
-				
-	
+				}	
 			} while (result != "Back");
 		}
 
